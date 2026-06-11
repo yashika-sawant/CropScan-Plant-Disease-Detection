@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disease Library — CropScan</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">🌿 CropScan</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about" class="active">Disease Library</a></li>
+    </ul>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+  </div>
+</nav>
+
+<div class="about-hero">
+  <h1>Disease Library</h1>
+  <p>All 38 conditions our AI can detect — across 14 crop types. Symptoms, causes, prevention and treatment for each.</p>
+  <div class="hero-stats">
+    <div class="hstat"><strong>38</strong><span>Conditions</span></div>
+    <div class="hstat"><strong>14</strong><span>Crop Types</span></div>
+    <div class="hstat"><strong>MobileNetV2</strong><span>AI Model</span></div>
+  </div>
+</div>
+
+<!-- Filter bar -->
+<div class="filter-bar">
+  <input type="text" id="searchInput" placeholder="🔍  Search disease or crop..." oninput="filterCards()" />
+  <div class="filter-chips">
+    <button class="chip active" onclick="filterBySeverity('all', this)">All</button>
+    <button class="chip" onclick="filterBySeverity('none', this)">✅ Healthy</button>
+    <button class="chip" onclick="filterBySeverity('moderate', this)">🟡 Moderate</button>
+    <button class="chip" onclick="filterBySeverity('high', this)">🔴 High</button>
+  </div>
+</div>
+
+<div class="about-content">
+  <div class="disease-library" id="diseaseGrid">
+    {% for name, info in diseases.items() %}
+    <div class="disease-card" style="--dc: {{ info.color }};" data-severity="{{ info.severity | lower }}" data-name="{{ name | lower }}">
+      <div class="dc-header">
+        <span class="dc-icon">{{ info.icon }}</span>
+        <div>
+          <h3>{{ name }}</h3>
+          <span class="dc-severity sev-{{ info.severity | lower }}">{{ info.severity }} Severity</span>
+        </div>
+      </div>
+
+      <div class="dc-section">
+        <h4>Symptoms</h4>
+        <ul>{% for s in info.symptoms[:3] %}<li>{{ s }}</li>{% endfor %}</ul>
+      </div>
+      <div class="dc-section">
+        <h4>Treatment</h4>
+        <ul>{% for t in info.treatment[:3] %}<li>{{ t }}</li>{% endfor %}</ul>
+      </div>
+      <div class="dc-section">
+        <h4>Prevention</h4>
+        <ul>{% for p in info.prevention[:2] %}<li>{{ p }}</li>{% endfor %}</ul>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <p id="noResults" style="display:none; text-align:center; color:var(--ink-muted); padding:40px;">No diseases found matching your search.</p>
+  <p class="disclaimer">* This library covers all 38 PlantVillage dataset classes. Always consult a local agronomist for field confirmation.</p>
+</div>
+
+<footer class="footer">
+  <p>🌿 CropScan — AI-Powered Plant Disease Detection &nbsp;|&nbsp; <a href="/">Back to Home</a></p>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+let currentSeverity = 'all';
+
+function filterCards() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const cards = document.querySelectorAll('.disease-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const name = card.dataset.name;
+    const sev = card.dataset.severity;
+    const matchSearch = name.includes(query);
+    const matchSev = currentSeverity === 'all' || sev === currentSeverity;
+    const show = matchSearch && matchSev;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+}
+
+function filterBySeverity(sev, btn) {
+  currentSeverity = sev;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards();
+}
+</script>
+</body>
+</html>

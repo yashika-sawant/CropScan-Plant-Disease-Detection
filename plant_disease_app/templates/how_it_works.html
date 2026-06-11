@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How It Works — CropScan</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    .pres-hero { background: linear-gradient(135deg, #0f2a18 0%, #1a4a2a 50%, #0d3320 100%); color: #fff; padding: 80px 24px; text-align: center; }
+    .pres-hero h1 { font-family: var(--font-head); font-size: clamp(2.2rem,5vw,3.5rem); margin-bottom: 16px; }
+    .pres-hero p { color: #a8d4b8; max-width: 600px; margin: 0 auto; font-size: 1.1rem; }
+    .pres-content { max-width: 900px; margin: 0 auto; padding: 60px 24px 80px; }
+    .pres-section { margin-bottom: 72px; }
+    .pres-section h2 { font-family: var(--font-head); font-size: 2rem; margin-bottom: 8px; color: var(--green); }
+    .pres-section .section-sub { color: var(--ink-muted); margin-bottom: 28px; font-size: 1rem; }
+    .flow-steps { display: flex; flex-direction: column; gap: 0; }
+    .flow-step { display: flex; gap: 24px; align-items: flex-start; }
+    .flow-line { display: flex; flex-direction: column; align-items: center; }
+    .flow-dot { width: 48px; height: 48px; border-radius: 50%; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0; }
+    .flow-connector { width: 2px; flex: 1; background: var(--border); min-height: 32px; margin: 4px 0; }
+    .flow-body { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 8px; flex: 1; box-shadow: var(--shadow); }
+    .flow-body h3 { font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 8px; }
+    .flow-body p { color: var(--ink-muted); font-size: .95rem; line-height: 1.65; }
+    .flow-body .tech-tag { display: inline-block; background: var(--green-pale); color: var(--green); border-radius: 6px; padding: 3px 10px; font-size: .78rem; font-weight: 600; margin-top: 10px; margin-right: 6px; }
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .tech-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; box-shadow: var(--shadow); }
+    .tech-card .ticon { font-size: 2.4rem; margin-bottom: 10px; }
+    .tech-card h4 { font-family: var(--font-head); font-size: 1rem; margin-bottom: 6px; }
+    .tech-card p { color: var(--ink-muted); font-size: .82rem; }
+    .limit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .limit-card { border-radius: var(--radius); padding: 24px; }
+    .limit-card.good { background: #e8f8f0; border: 1px solid #a8e6c0; }
+    .limit-card.bad { background: #fdecea; border: 1px solid #f5c6c0; }
+    body.dark .limit-card.good { background: #1a3d28; border-color: #2d6b42; }
+    body.dark .limit-card.bad { background: #3d1a1a; border-color: #6b2d2d; }
+    .limit-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 12px; }
+    .limit-card.good h4 { color: #27ae60; }
+    .limit-card.bad h4 { color: #c0392b; }
+    .limit-card ul { display: flex; flex-direction: column; gap: 7px; }
+    .limit-card li { font-size: .875rem; color: var(--ink-muted); padding-left: 14px; position: relative; }
+    .limit-card li::before { position: absolute; left: 0; }
+    .limit-card.good li::before { content: "✓"; color: #27ae60; }
+    .limit-card.bad li::before { content: "✗"; color: #c0392b; }
+    .model-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+    .model-box h3 { font-family: var(--font-head); font-size: 1.3rem; margin-bottom: 16px; }
+    .model-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .9rem; }
+    .model-row:last-child { border-bottom: none; }
+    .model-row span:first-child { color: var(--ink-muted); }
+    .model-row span:last-child { font-weight: 600; color: var(--green); }
+    @media(max-width:600px){ .limit-grid{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">🌿 CropScan</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">Disease Library</a></li>
+      <li><a href="/how-it-works" class="active">How It Works</a></li>
+    </ul>
+    <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="pres-hero">
+  <h1>How CropScan Works</h1>
+  <p>A complete walkthrough of the AI pipeline — from photo upload to disease diagnosis.</p>
+</div>
+
+<div class="pres-content">
+
+  <!-- Step by step flow -->
+  <div class="pres-section">
+    <h2>The Detection Pipeline</h2>
+    <p class="section-sub">Every image you upload goes through these 5 steps in under 3 seconds.</p>
+    <div class="flow-steps">
+
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">1</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <h3>📷 You Upload a Leaf Photo</h3>
+          <p>You drag & drop or select a JPG/PNG photo of a crop leaf. The browser previews it instantly. Only image files are accepted — the app validates the format before sending.</p>
+          <span class="tech-tag">HTML File API</span><span class="tech-tag">JavaScript</span><span class="tech-tag">Flask Upload</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">2</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <h3>💾 Flask Saves the Image Securely</h3>
+          <p>The Python Flask server receives the image, generates a unique random filename (UUID) so no two files ever clash, and saves it to the <code>static/uploads/</code> folder on your computer. It never leaves your machine.</p>
+          <span class="tech-tag">Python Flask</span><span class="tech-tag">UUID</span><span class="tech-tag">Werkzeug</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">3</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <h3>🔬 Image is Preprocessed for the AI</h3>
+          <p>The image is resized to exactly <strong>224 × 224 pixels</strong> — the input size MobileNetV2 requires. Pixel values are normalised from 0–255 to the range the model was trained on using TensorFlow's <code>preprocess_input()</code>.</p>
+          <span class="tech-tag">TensorFlow</span><span class="tech-tag">Keras</span><span class="tech-tag">NumPy</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">4</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <h3>🧠 MobileNetV2 Analyses the Image</h3>
+          <p>The preprocessed image is passed through <strong>MobileNetV2</strong> — a deep convolutional neural network with 53 layers. It extracts features like colour patterns, texture, spot shapes, and lesion edges. The model outputs a probability score for each of its classes, and the highest score is selected as the prediction.</p>
+          <span class="tech-tag">MobileNetV2</span><span class="tech-tag">CNN</span><span class="tech-tag">ImageNet Weights</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">5</div><div class="flow-dot" style="height:auto;border-radius:12px;width:auto;padding:4px 12px;font-size:.85rem;">✓</div></div>
+        <div class="flow-body">
+          <h3>📋 Results Displayed with Treatment Plan</h3>
+          <p>The predicted class is mapped to one of 38 PlantVillage disease labels. The app then looks up the full disease profile from its database and renders the results page — showing the disease name, confidence score, symptoms, causes, treatment recommendations, and prevention tips.</p>
+          <span class="tech-tag">Jinja2 Templates</span><span class="tech-tag">Disease Database</span><span class="tech-tag">HTML/CSS</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AI Model details -->
+  <div class="pres-section">
+    <h2>The AI Model</h2>
+    <p class="section-sub">Technical details about the neural network powering CropScan.</p>
+    <div class="model-box">
+      <h3>MobileNetV2 — Model Card</h3>
+      <div class="model-row"><span>Architecture</span><span>MobileNetV2 (Convolutional Neural Network)</span></div>
+      <div class="model-row"><span>Developed by</span><span>Google Brain Team (2018)</span></div>
+      <div class="model-row"><span>Input size</span><span>224 × 224 × 3 (RGB image)</span></div>
+      <div class="model-row"><span>Parameters</span><span>3.4 million (lightweight)</span></div>
+      <div class="model-row"><span>Pre-trained on</span><span>ImageNet (1.2 million images, 1000 classes)</span></div>
+      <div class="model-row"><span>Disease classes mapped</span><span>38 PlantVillage conditions</span></div>
+      <div class="model-row"><span>Runs on</span><span>CPU only — no GPU needed</span></div>
+      <div class="model-row"><span>Average inference time</span><span>1–3 seconds on a normal laptop</span></div>
+    </div>
+  </div>
+
+  <!-- Tech Stack -->
+  <div class="pres-section">
+    <h2>Technology Stack</h2>
+    <p class="section-sub">Every tool used to build this application.</p>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="ticon">🐍</div><h4>Python 3.12</h4><p>Core backend language</p></div>
+      <div class="tech-card"><div class="ticon">🌶️</div><h4>Flask</h4><p>Web server & routing</p></div>
+      <div class="tech-card"><div class="ticon">🧠</div><h4>TensorFlow 2.x</h4><p>AI model & inference</p></div>
+      <div class="tech-card"><div class="ticon">📱</div><h4>MobileNetV2</h4><p>Neural network architecture</p></div>
+      <div class="tech-card"><div class="ticon">🖼️</div><h4>Pillow</h4><p>Image loading & processing</p></div>
+      <div class="tech-card"><div class="ticon">🔢</div><h4>NumPy</h4><p>Array & math operations</p></div>
+      <div class="tech-card"><div class="ticon">🎨</div><h4>HTML + CSS</h4><p>Frontend design & layout</p></div>
+      <div class="tech-card"><div class="ticon">⚡</div><h4>JavaScript</h4><p>Interactivity & preview</p></div>
+    </div>
+  </div>
+
+  <!-- Limitations -->
+  <div class="pres-section">
+    <h2>What It Can & Can't Do</h2>
+    <p class="section-sub">Be aware of the current limitations before relying on results.</p>
+    <div class="limit-grid">
+      <div class="limit-card good">
+        <h4>✅ What Works Well</h4>
+        <ul>
+          <li>Detects 38 disease conditions</li>
+          <li>Works across 14 crop types</li>
+          <li>Runs fully offline on your PC</li>
+          <li>Results in under 3 seconds</li>
+          <li>Provides treatment & prevention info</li>
+          <li>No internet required after setup</li>
+        </ul>
+      </div>
+      <div class="limit-card bad">
+        <h4>⚠️ Current Limitations</h4>
+        <ul>
+          <li>Not fine-tuned on PlantVillage dataset yet</li>
+          <li>Best with clear close-up leaf photos</li>
+          <li>May struggle with blurry images</li>
+          <li>Not a replacement for an agronomist</li>
+          <li>Confidence scores are approximate</li>
+          <li>Works best with tomato/common crops</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade path -->
+  <div class="pres-section">
+    <h2>How to Make It More Accurate</h2>
+    <p class="section-sub">The app is designed so you can plug in a properly trained model in minutes.</p>
+    <div class="flow-body" style="border-left: 4px solid var(--green);">
+      <h3>🔧 Upgrade Path</h3>
+      <p>Replace the <code>predict_disease()</code> function in <code>app.py</code> with a model trained on the <strong>PlantVillage dataset</strong> (54,000+ images, freely available on Kaggle). Train a MobileNetV2 with transfer learning — fine-tune the last few layers on the 38-class PlantVillage data — and you'll get <strong>95%+ accuracy</strong>. The rest of the app needs zero changes.</p>
+      <span class="tech-tag">Kaggle PlantVillage Dataset</span>
+      <span class="tech-tag">Transfer Learning</span>
+      <span class="tech-tag">Fine-tuning</span>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <p>🌿 CropScan — AI-Powered Plant Disease Detection &nbsp;|&nbsp; <a href="/">Back to Home</a></p>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CropScan — AI Plant Disease Detection</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">🌿 CropScan</a>
+    <ul class="nav-links">
+      <li><a href="/" class="active">Home</a></li>
+      <li><a href="/about">Disease Library</a></li>
+      <li><a href="/how-it-works">How It Works</a></li>
+    </ul>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <span class="hero-badge">AI-Powered Agriculture</span>
+    <h1>AI-Powered Pest and<br/>Plant Disease Detection<br/><em>System</em></h1>
+    <p class="hero-sub">Upload a photo of your crop leaf and receive instant disease diagnosis, severity assessment, and treatment recommendations — powered by machine learning.</p>
+    <a href="#upload" class="btn-primary">Analyse a Leaf →</a>
+  </div>
+  <div class="hero-visual">
+    <div class="leaf-card lc1">🍃<span>Early Blight</span></div>
+    <div class="leaf-card lc2">🌿<span>Healthy</span></div>
+    <div class="leaf-card lc3">🍂<span>Late Blight</span></div>
+  </div>
+</header>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-it-works">
+  <h2>How It Works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">📷</div>
+      <h3>Upload</h3>
+      <p>Take a clear photo of the affected crop leaf and upload it directly from your device.</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-icon">🧠</div>
+      <h3>Analyse</h3>
+      <p>Our AI model analyses leaf texture, colour patterns and lesions to identify the disease.</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-icon">💊</div>
+      <h3>Treat</h3>
+      <p>Receive a detailed report with disease name, confidence score, and treatment plan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── UPLOAD SECTION ── -->
+<section class="upload-section" id="upload">
+  <div class="upload-card">
+    <h2>Analyse Your Crop</h2>
+    <p class="upload-sub">Supports JPG and PNG · Max 16 MB</p>
+
+    {% if error %}
+    <div class="error-banner">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+      <div class="drop-zone" id="dropZone">
+        <img id="preview" src="" alt="Preview" style="display:none;" />
+        <div id="dropPlaceholder">
+          <div class="drop-icon">🖼️</div>
+          <p>Drag & drop your image here<br/><span>or click to browse</span></p>
+        </div>
+        <input type="file" name="file" id="fileInput" accept=".jpg,.jpeg,.png" required />
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('fileInput').click()">📁 Choose File</button>
+        <button type="submit" class="btn-primary" id="detectBtn" disabled>🔬 Detect Disease</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ── LOADING OVERLAY ── -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <p>Analysing your leaf...</p>
+    <small>Running AI detection model</small>
+  </div>
+</div>
+
+<!-- ── HISTORY PANEL ── -->
+<section class="history-section" id="historySection" style="display:none;">
+  <div class="history-inner">
+    <div class="history-header">
+      <h3>Recent Analyses</h3>
+      <button onclick="clearHistory()" class="btn-ghost">Clear</button>
+    </div>
+    <div class="history-grid" id="historyGrid"></div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <p>🌿 CropScan — AI-Powered Plant Disease Detection &nbsp;|&nbsp; <a href="/about">Disease Library</a></p>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
